@@ -19,7 +19,15 @@ function detectProblem(): ConfigProblem {
   // ブラウザには "TypeError: Failed to fetch" としか出ない。
   // 原因が非常に分かりにくいので、通信する前に弾く。
   if (/^https:\/\/x+\.supabase\.co\/?$/i.test(url)) return "placeholder";
-  if (anonKey.includes("...") || anonKey.length < 40) return "placeholder";
+
+  // キーは 2 形式ある。どちらも受け付ける:
+  //   sb_publishable_xxx  … 新しい Publishable key
+  //   eyJhbGciOi...       … 旧 anon public key (JWT)
+  // 長さでの判定はキー形式の変更に弱いので、
+  // 「明らかに書き換えていない」ものだけを弾く。
+  if (anonKey.includes("...") || /^(your|xxx|<)/i.test(anonKey) || anonKey.length < 20) {
+    return "placeholder";
+  }
 
   try {
     const parsed = new URL(url);

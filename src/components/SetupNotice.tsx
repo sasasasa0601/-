@@ -42,9 +42,15 @@ export function SetupNotice({ problem }: { problem: ConfigProblem }) {
           </li>
           <li>
             <code className="text-ink-50">.env.example</code> を{" "}
-            <code className="text-ink-50">.env.local</code> にコピーし、Project Settings &gt;
-            API の <b className="text-ink-50">Project URL</b> と{" "}
-            <b className="text-ink-50">anon public</b> キーを貼り付ける
+            <code className="text-ink-50">.env.local</code> にコピーし、
+            <br />
+            URL は <code className="text-ink-50">https://&lt;プロジェクトref&gt;.supabase.co</code>
+            （ref はダッシュボードの URL にあります）、
+            <br />
+            キーは Project Settings &gt; API Keys の{" "}
+            <b className="text-ink-50">Publishable key</b>（
+            <code className="text-ink-50">sb_publishable_…</code>）を貼り付ける。
+            <b className="text-chip-lose">secret / service_role キーは使わないこと</b>
           </li>
           <li>
             開発サーバーを<b className="text-ink-50">再起動</b>する（

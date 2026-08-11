@@ -207,7 +207,10 @@ npm install
 # 2) SQL Editor で supabase/migrations/0001_init.sql を丸ごと実行
 # 3) 接続情報を設定
 cp .env.example .env.local
-#    Project Settings > API の Project URL と anon public key を記入
+#    URL: ダッシュボードのアドレスバーにある ref から
+#         supabase.com/dashboard/project/<ref>/... → https://<ref>.supabase.co
+#    KEY: Project Settings > API Keys の Publishable key (sb_publishable_...)
+#         旧 anon public key (eyJ...) でも動きます
 
 npm run dev   # http://localhost:3000
 ```
