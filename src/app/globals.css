@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --color-felt-950: #05130e;
+  --color-felt-900: #0a2018;
+  --color-felt-800: #0f3025;
+  --color-felt-700: #17462f;
+
+  --color-ink-50: #f4faf7;
+  --color-ink-300: #9fb8ac;
+  --color-ink-500: #6c8579;
+
+  --color-chip-gold: #f5c451;
+  --color-chip-win: #4ade80;
+  --color-chip-lose: #fb7185;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", "Yu Gothic", sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--color-felt-800) 0%, var(--color-felt-950) 60%)
+      no-repeat fixed;
+  color: var(--color-ink-50);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* iOS のバウンス時に下地が白く見えないように */
+  background-color: var(--color-felt-950);
+}
+
+/* 数字入力のスピナーを消す(スマホでの誤タップ防止) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@utility tabnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ホームバー / ノッチのための余白 */
+@utility pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
