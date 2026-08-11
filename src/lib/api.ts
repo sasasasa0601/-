@@ -9,9 +9,35 @@ import type {
   Standing,
 } from "./types";
 
+/**
+ * Supabase のエラー文言を、原因の分かる日本語に置き換える。
+ *
+ * 接続先が間違っているときは "TypeError: Failed to fetch" としか出ず、
+ * 画面を見ただけでは何が悪いのか分からないため。
+ */
+function describeError(message: string): string {
+  if (/failed to fetch|networkerror|load failed|fetch failed/i.test(message)) {
+    return (
+      "Supabase に接続できませんでした。.env.local の NEXT_PUBLIC_SUPABASE_URL と " +
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY が実際のプロジェクトの値になっているか、" +
+      "変更後に開発サーバーを再起動したかを確認してください。"
+    );
+  }
+  if (/JWT|api key|invalid.*key/i.test(message)) {
+    return "anon キーが正しくないようです。Project Settings > API の anon public キーを確認してください。";
+  }
+  if (/relation .* does not exist|schema cache/i.test(message)) {
+    return "テーブルが見つかりません。SQL Editor で supabase/migrations/0001_init.sql を実行してください。";
+  }
+  if (/row-level security|violates row-level/i.test(message)) {
+    return "このルームへの権限がありません。URL のコードが正しいか確認してください。";
+  }
+  return message;
+}
+
 /** Supabase のエラーを、ユーザーに見せられる Error に変換する */
 function unwrap<T>(res: { data: T | null; error: { message: string } | null }): T {
-  if (res.error) throw new Error(res.error.message);
+  if (res.error) throw new Error(describeError(res.error.message));
   if (res.data === null) throw new Error("データが見つかりませんでした");
   return res.data;
 }
@@ -38,7 +64,7 @@ export async function getRoom(shareCode: string): Promise<Room | null> {
     .eq("share_code", shareCode)
     .maybeSingle();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(describeError(error.message));
   return data;
 }
 
@@ -115,7 +141,7 @@ export async function getSession(
     .eq("id", sessionId)
     .maybeSingle<SessionWithPlayers>();
 
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(describeError(error.message));
   if (data) data.session_players.sort((a, b) => a.seat_no - b.seat_no);
   return data;
 }
@@ -148,7 +174,7 @@ export async function createSession(
       buy_in: options.defaultBuyIn ?? 0,
     }));
     const { error } = await client.from("session_players").insert(rows);
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(describeError(error.message));
   }
 
   return session;
@@ -174,7 +200,7 @@ export async function deleteSession(shareCode: string, sessionId: string): Promi
     .from("sessions")
     .delete()
     .eq("id", sessionId);
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(describeError(error.message));
 }
 
 // ---------------------------------------------------------------- 参加者
@@ -219,7 +245,7 @@ export async function removeSessionPlayer(shareCode: string, id: string): Promis
     .from("session_players")
     .delete()
     .eq("id", id);
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(describeError(error.message));
 }
 
 // ---------------------------------------------------------------- 通算成績

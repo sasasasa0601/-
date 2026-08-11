@@ -1,8 +1,8 @@
 import { HomeScreen } from "@/components/screens/HomeScreen";
 import { SetupNotice } from "@/components/SetupNotice";
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { configProblem, isSupabaseConfigured } from "@/lib/supabase";
 
 export default function Page() {
-  if (!isSupabaseConfigured) return <SetupNotice />;
+  if (!isSupabaseConfigured) return <SetupNotice problem={configProblem} />;
   return <HomeScreen />;
 }
